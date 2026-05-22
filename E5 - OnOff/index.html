@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Bouncing Color Button</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: #0f172a;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #bounceBtn {
+            position: absolute;
+            /* Start centered in the viewport */
+            left: calc(50vw - 20px);
+            top: calc(50vh - 20px);
+            
+            /* Made the button smaller (40px instead of 80px) */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #22c55e;
+            
+            /* Ensures absolutely no native borders, outlines, or default browser focus rings */
+            border: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent; /* Removes flash highlight on mobile */
+            
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            
+            /* Sped up movement from 0.4s down to 0.15s for high-speed snappy tracking */
+            transition: left 0.15s cubic-bezier(0.19, 1, 0.22, 1), 
+                        top 0.15s cubic-bezier(0.19, 1, 0.22, 1), 
+                        background-color 0.15s ease;
+        }
+
+        /* Removes the specific focus ring "dot" or outline added by some browsers on click */
+        #bounceBtn:focus, #bounceBtn:focus-visible {
+            outline: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="bounceBtn"></button>
+
+    <script>
+        const button = document.getElementById('bounceBtn');
+
+        button.addEventListener('click', () => {
+            const viewWidth = window.innerWidth;
+            const viewHeight = window.innerHeight;
+
+            const btnWidth = button.offsetWidth;
+            const btnHeight = button.offsetHeight;
+
+            const maxX = viewWidth - btnWidth;
+            const maxY = viewHeight - btnHeight;
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            let randomColor = Math.floor(Math.random() * 16777215).toString(16);
+            randomColor = "#" + randomColor.padStart(6, '0');
+
+            button.style.left = `${randomX}px`;
+            button.style.top = `${randomY}px`;
+            button.style.backgroundColor = randomColor;
+        });
+
+        window.addEventListener('resize', () => {
+            const rect = button.getBoundingClientRect();
+            if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
+                const safeX = Math.min(rect.left, window.innerWidth - button.offsetWidth);
+                const safeY = Math.min(rect.top, window.innerHeight - button.offsetHeight);
+                button.style.left = `${Math.max(0, safeX)}px`;
+                button.style.top = `${Math.max(0, safeY)}px`;
+            }
+        });
+    </script>
+</body>
+</html>
